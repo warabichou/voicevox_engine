@@ -10,11 +10,14 @@ WORKDIR /app
 # リポジトリ取得（release-0.24）
 RUN git clone --depth 1 --branch release-0.24 https://github.com/VOICEVOX/voicevox_engine.git .
 
+# resources フォルダを除いて voicevox_engine のみ install 対象にする
+RUN sed -i "s/find_packages()/['voicevox_engine']/g" setup.py
+
 # Pythonライブラリインストール
 RUN pip install --upgrade pip && \
-    pip install -e .  # ← ここでvoicevox_engineがimport可能になる
+    pip install -e .
 
-# モデルファイルのダウンロード（今度はOK）
+# モデルファイルのダウンロード
 RUN python3 -m voicevox_engine.dev.download_resource --download-dir /root/.cache/voicevox_engine
 
 EXPOSE 50021
