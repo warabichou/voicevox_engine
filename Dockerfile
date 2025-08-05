@@ -66,5 +66,5 @@ CMD ["gosu", "user", "/opt/voicevox_engine/run", "--host", "0.0.0.0"]
 # -------------------------------
 # GPU対応版（Renderでは未使用）
 # -------------------------------
-FROM runtime-env AS runtime-nvidia-env
-CMD ["gosu", "user", "/opt/voicevox_engine/run", "--use_gpu", "--host", "0.0.0.0"]
+# FROM runtime-env AS runtime-nvidia-env
+# CMD ["gosu", "user", "/opt/voicevox_engine/run", "--use_gpu", "--host", "0.0.0.0"]
