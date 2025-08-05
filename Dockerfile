@@ -7,17 +7,14 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# リポジトリ取得（release-0.24）
+# VOICEVOXエンジンのrelease-0.24をclone
 RUN git clone --depth 1 --branch release-0.24 https://github.com/VOICEVOX/voicevox_engine.git .
 
-# resources フォルダを除いて voicevox_engine のみ install 対象にする
-RUN sed -i "s/find_packages()/['voicevox_engine']/g" setup.py
-
-# Pythonライブラリインストール
+# pipでインストール（pyproject.tomlベース）
 RUN pip install --upgrade pip && \
-    pip install -e .
+    pip install .
 
-# モデルファイルのダウンロード
+# モデルファイルをダウンロード（devモジュールはこの段階で使える）
 RUN python3 -m voicevox_engine.dev.download_resource --download-dir /root/.cache/voicevox_engine
 
 EXPOSE 50021
