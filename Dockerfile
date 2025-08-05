@@ -2,21 +2,25 @@ FROM python:3.10-slim
 
 # 必要な依存
 RUN apt-get update && apt-get install -y \
-    git curl unzip ffmpeg libsndfile1-dev build-essential python3-dev && \
+    git curl unzip ffmpeg libsndfile1-dev build-essential && \
     apt-get clean
 
 WORKDIR /app
 
-# VOICEVOXエンジンのrelease-0.24をclone
-RUN git clone --depth 1 --branch release-0.24 https://github.com/VOICEVOX/voicevox_engine.git .
+# VOICEVOX masterブランチを clone
+RUN git clone https://github.com/VOICEVOX/voicevox_engine.git .
 
-# pyproject.tomlビルド対応のパッケージを事前にインストール
-RUN pip install --upgrade pip setuptools wheel build
+# resources を除外（インストール対象外にするため）
+RUN rm -rf resources test tools docs
 
-# ライブラリインストール
-RUN pip install .
+# setup.py を追加（← voicevox_engine だけを対象にする）
+COPY setup.py ./setup.py
 
-# モデルファイルをダウンロード
+# Pythonライブラリインストール
+RUN pip install --upgrade pip && \
+    pip install .
+
+# モデルファイルダウンロード
 RUN python3 -m voicevox_engine.dev.download_resource --download-dir /root/.cache/voicevox_engine
 
 EXPOSE 50021
